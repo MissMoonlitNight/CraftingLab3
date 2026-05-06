@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Axe
   m_EditorClassIdentifier: 
   itemName: Item
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5231a10a5c2e88142a571ebe3fbad1e6, type: 3}
   maxStack: 1

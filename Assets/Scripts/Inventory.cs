@@ -1,3 +1,4 @@
+using System; 
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,33 +6,29 @@ public class Inventory : MonoBehaviour
 {
     public List<InventorySlot> slots = new List<InventorySlot>();
 
+    // Событие, которое оповестит UI об изменениях
+    public event Action OnInventoryChanged;
+
     [Header("Test Resources")]
     public ItemData wood;
     public ItemData stone;
     public ItemData stick;
-    public ItemData fiber;
-    public ItemData coal;
-    // Если есть другие ресурсы, добавьте их сюда
-    // public ItemData ironOre; ...
 
     void Start()
     {
-        // Начальное наполнение для тестов (Этап 7)
-        if (wood) AddItem(wood, 5);
+        if (wood) AddItem(wood, 3);
         if (stone) AddItem(stone, 5);
-        if (stick) AddItem(stick, 3);
-        if (fiber) AddItem(fiber, 2);
-        if (coal) AddItem(coal, 2);
+        if (stick) AddItem(stick, 2);
+
+        // Вызываем обновление UI при старте, чтобы отрисовались начальные предметы
+        OnInventoryChanged?.Invoke();
     }
 
     public bool HasItem(ItemData item, int amount)
     {
         int total = 0;
         foreach (var slot in slots)
-        {
-            if (slot.item == item)
-                total += slot.amount;
-        }
+            if (slot.item == item) total += slot.amount;
         return total >= amount;
     }
 
@@ -45,15 +42,14 @@ public class Inventory : MonoBehaviour
                 int take = Mathf.Min(slots[i].amount, remaining);
                 slots[i].amount -= take;
                 remaining -= take;
-                if (slots[i].amount <= 0)
-                    slots.RemoveAt(i);
+                if (slots[i].amount <= 0) slots.RemoveAt(i);
             }
         }
+        OnInventoryChanged?.Invoke(); // Оповещаем UI
     }
 
     public void AddItem(ItemData item, int amount)
     {
-        // Сначала пытаемся добавить в существующий слот (стакинг)
         foreach (var slot in slots)
         {
             if (slot.item == item && slot.amount < item.maxStack)
@@ -62,16 +58,15 @@ public class Inventory : MonoBehaviour
                 int add = Mathf.Min(space, amount);
                 slot.amount += add;
                 amount -= add;
-                if (amount == 0) return;
+                if (amount == 0) break;
             }
         }
-
-        // Если осталось, создаём новый слот
         while (amount > 0)
         {
             int add = Mathf.Min(amount, item.maxStack);
             slots.Add(new InventorySlot(item, add));
             amount -= add;
         }
+        OnInventoryChanged?.Invoke(); // Оповещаем UI
     }
 }

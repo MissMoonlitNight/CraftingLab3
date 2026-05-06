@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Stick
   m_EditorClassIdentifier: 
   itemName: Item
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 3e37287100ebd9f43a1fa6df5702f687, type: 3}
   maxStack: 64
